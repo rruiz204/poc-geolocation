@@ -1,4 +1,5 @@
 using Server;
+using Server.Src.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddVitalServices(builder.Configuration);
@@ -12,5 +13,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("Development");
+
+app.MapHub<PingHub>("/ping-hub");
 app.MapControllers();
+
 app.Run();

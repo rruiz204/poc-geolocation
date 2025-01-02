@@ -1,7 +1,7 @@
 using Server;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddVitalServices();
+builder.Services.AddVitalServices(builder.Configuration);
 
 var app = builder.Build();
 

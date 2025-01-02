@@ -6,7 +6,7 @@ namespace Server.Src.Controllers;
 [Route("api/")]
 public class PingController : ControllerBase
 {
-  [HttpGet("ping")]
+  [HttpGet("ping-rest")]
   public IActionResult Ping()
   {
     return Ok("pong");

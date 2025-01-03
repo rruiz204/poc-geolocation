@@ -16,6 +16,7 @@ app.UseHttpsRedirection();
 app.UseCors("Development");
 
 app.MapHub<PingHub>("/ping-hub");
+app.MapHub<CoordHub>("/coord-hub");
 app.MapControllers();
 
 app.Run();

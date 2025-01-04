@@ -14,6 +14,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("Development");
+app.UseRateLimiter();
 
 app.MapHub<PingHub>("/ping-hub");
 app.MapHub<CoordHub>("/coord-hub");

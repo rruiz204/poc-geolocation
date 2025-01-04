@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSocket } from "../sockets/useSocket";
 
-export const Ping = (): JSX.Element => {
+export const PingWs = (): JSX.Element => {
   const { connect, disconnect } = useSocket();
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export const Ping = (): JSX.Element => {
 
   return (
     <div className="h-screen w-screen p-10 bg-[#0b1120] text-white">
-      <h1 className="text-3xl font-semibold">Ping Page</h1>
+      <h1 className="text-3xl font-semibold">Ping Web Sockets Page</h1>
     </div>
   );
 };

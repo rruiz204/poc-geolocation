@@ -1,9 +1,8 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { useSocketContract } from "./useSocketContract";
 import { HubConnection, HubConnectionBuilder, HttpTransportType } from "@microsoft/signalr";
 
 export const useSocket = (): useSocketContract => {
-  const [isConnected, setIsConnected] = useState<boolean>(false);
   const socket = useRef<HubConnection | null>(null);
 
   const connect = async (url: string) => {
@@ -15,14 +14,10 @@ export const useSocket = (): useSocketContract => {
     }).build();
 
     await socket.current.start();
-    setIsConnected(true);
   };
 
   const disconnect = async () => {
-    if (isConnected) {
-      socket.current?.stop();
-      setIsConnected(false)
-    };
+    if (socket.current?.state == "Disconnected") socket.current?.stop();
   };
 
   const listen = <T>(event: string, callback: (model: T) => void) => {
@@ -30,8 +25,8 @@ export const useSocket = (): useSocketContract => {
   };
 
   const send = async <T>(event: string, args: T) => {
-    if (isConnected) await socket.current?.invoke(event, args);
+    if (socket.current?.state == "Connected") await socket.current?.invoke(event, args);
   };
 
-  return Object.freeze({ connect, disconnect, listen, send, isConnected });
+  return Object.freeze({ connect, disconnect, listen, send });
 };

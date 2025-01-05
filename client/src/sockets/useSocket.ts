@@ -33,5 +33,5 @@ export const useSocket = (): useSocketContract => {
     if (isConnected) await socket.current?.invoke(event, args);
   };
 
-  return Object.freeze({ connect, disconnect, listen, send })
+  return Object.freeze({ connect, disconnect, listen, send, isConnected });
 };

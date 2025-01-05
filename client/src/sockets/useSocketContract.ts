@@ -1,4 +1,6 @@
 export interface useSocketContract {
+  isConnected: boolean;
+  
   connect: (url: string) => Promise<void>;
   disconnect: () => Promise<void>;
 

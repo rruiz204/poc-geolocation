@@ -10,7 +10,7 @@ interface Props {
 
 export const Client = ({ name }: Props): JSX.Element => {
   const [clients, setClients] = useState<ClientModel[]>([]);
-  const { connect, disconnect, send, listen } = useSocket();
+  const { connect, disconnect, send, listen, connected } = useSocket();
 
   useEffect(() => {
     const SetupEffects = async () => {
@@ -27,6 +27,19 @@ export const Client = ({ name }: Props): JSX.Element => {
 
     return () => { disconnect() };
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (connected) {
+        const { lat, lon } = GenerateCoords();
+
+        await send<ClientModel>("SendCoords", { name, latitude: lat, longitude: lon });
+        console.log(`sending coords from ${name}...`);
+      };
+    }, 5000)
+
+    return () => { clearInterval(interval) };
+  }, [connected]);
 
   useEffect(() => {
     listen<ClientModel>("ReceiveCoords", (model) => {

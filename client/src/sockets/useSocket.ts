@@ -3,15 +3,15 @@ import { useSocketContract } from "./useSocketContract";
 import { HubConnection, HubConnectionBuilder, HttpTransportType } from "@microsoft/signalr";
 
 export const useSocket = (): useSocketContract => {
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [ isConnected, setIsConnected ] = useState<boolean>(false);
   const socket = useRef<HubConnection | null>(null);
 
-  const connect = async (url: string) => {
+  const connect = async (url: string): Promise<void> => {
     if (socket.current) return;
 
     socket.current = new HubConnectionBuilder().withUrl(url, {
       skipNegotiation: true,
-      transport: HttpTransportType.WebSockets
+      transport: HttpTransportType.WebSockets,
     }).build();
 
     await socket.current.start();
@@ -19,10 +19,10 @@ export const useSocket = (): useSocketContract => {
   };
 
   const disconnect = async () => {
-    if (isConnected) {
-      socket.current?.stop();
-      setIsConnected(false)
-    };
+    if (socket.current?.state == "Disconnected") return;
+
+    await socket.current?.stop();
+    setIsConnected(false);
   };
 
   const listen = <T>(event: string, callback: (model: T) => void) => {
@@ -30,8 +30,8 @@ export const useSocket = (): useSocketContract => {
   };
 
   const send = async <T>(event: string, args: T) => {
-    if (isConnected) await socket.current?.invoke(event, args);
+    if (socket.current?.state == "Connected") await socket.current.invoke(event, args);
   };
 
-  return Object.freeze({ connect, disconnect, listen, send, isConnected });
+  return Object.freeze({ isConnected, connect, disconnect, listen, send });
 };

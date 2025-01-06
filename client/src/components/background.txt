@@ -1,0 +1,43 @@
+  /* const { connect, disconnect, send, listen, connected } = useSocket();
+
+  useEffect(() => {
+    const SetupEffects = async () => {
+      await connect("http://localhost:8000/coord-hub");
+      console.log(`successfully connected to the server | ${name}`);
+
+      const { lat, lon } = GenerateCoords();
+
+      await send<ClientModel>("SendCoords", { name, latitude: lat, longitude: lon });
+      console.log(`sending coords from ${name}...`);
+    };
+
+    SetupEffects();
+
+    return () => { disconnect() };
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (connected) {
+        const { lat, lon } = GenerateCoords();
+
+        await send<ClientModel>("SendCoords", { name, latitude: lat, longitude: lon });
+        console.log(`sending coords from ${name}...`);
+      };
+    }, 5000)
+
+    return () => { clearInterval(interval) };
+  }, [connected]);
+
+  useEffect(() => {
+    listen<ClientModel>("ReceiveCoords", (model) => {
+      console.log(`received coords from ${model.name} | ${model.latitude}, ${model.longitude}`);
+      const existingClient = clients.find((c) => c.name === model.name);
+
+      if (!existingClient) {
+        setClients([...clients, model]);
+      } else {
+        setClients(clients.map((c) => c.name === model.name ? model : c));
+      };
+    });
+  }); */

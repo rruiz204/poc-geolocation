@@ -1,25 +1,17 @@
+import { ClientList } from "./ClientList";
 import { useState, useEffect } from "react";
-import { ClientsList } from "./ClientsList";
 import { useSocket } from "../sockets/useSocket";
 import { Client as ClientModel } from "../models/Client";
+import { GenerateCoords } from "../utils/GenerateCoords";
+
 
 interface Props {
   name: string;
-};
+}
 
 export const Client = ({ name }: Props): JSX.Element => {
   const [clients, setClients] = useState<ClientModel[]>([]);
   const { isConnected, connect, disconnect, listen, send } = useSocket();
-
-  listen<ClientModel>("ReceiveCoords", (model) => {
-    const existingClient = clients.find((c) => c.name === model.name);
-
-    if (!existingClient) {
-      setClients([...clients, model]);
-    } else {
-      setClients(clients.map((c) => c.name === model.name ? model : c));
-    };
-  });
 
 
   useEffect(() => {
@@ -29,6 +21,7 @@ export const Client = ({ name }: Props): JSX.Element => {
     };
 
     SetupSocketConnnection();
+
     return () => { disconnect() };
   }, []);
 
@@ -37,11 +30,29 @@ export const Client = ({ name }: Props): JSX.Element => {
     if (!isConnected) return;
 
     const interval = setInterval(async () => {
-      await send<ClientModel>("SendCoords", { name, latitude: 20.2323, longitude: 20.7878 });
-    }, 5000)
+      const { lat, lon } = GenerateCoords()
+      await send<ClientModel>("SendCoords", { name, latitude: lat, longitude: lon });
+    }, 3000);
+
+    const handleCoords = (model: ClientModel) => {
+      setClients(prevClients => {
+        const existingClientIndex = prevClients.findIndex(c => c.name === model.name);
+
+        if (existingClientIndex === -1) {
+          return [...prevClients, model];
+        };
+        
+        return prevClients.map((c, i) =>
+          i === existingClientIndex ? model : c
+        );
+      });
+    };
+
+    listen<ClientModel>("ReceiveCoords", handleCoords);
 
     return () => { clearInterval(interval) };
   }, [isConnected]);
+
 
   return (
     <div className="p-5 text-white border-2 border-white rounded-md flex flex-col gap-y-3">
@@ -54,7 +65,7 @@ export const Client = ({ name }: Props): JSX.Element => {
 
         {clients.length == 0
           ? <p>No clients available</p>
-          : <ClientsList clients={clients} />
+          : <ClientList clients={clients} />
         }
       </div>
     </div>

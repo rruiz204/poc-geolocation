@@ -4,7 +4,7 @@ interface Props {
   clients: Client[];
 };
 
-export const ClientsList = ({ clients }: Props): JSX.Element => {
+export const ClientList = ({ clients }: Props): JSX.Element => {
   return (
     <div className="flex flex-col gap-y-3">
       {
